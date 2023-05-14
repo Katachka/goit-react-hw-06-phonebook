@@ -1,21 +1,21 @@
-import { useState } from 'react';
-import {Form, Label, Span, Input, Button} from './ContactForm.styled';
+import PropTypes from 'prop-types';
 import React from 'react';
+import { useState } from 'react';
 import { nanoid } from 'nanoid';
 import { useDispatch, useSelector } from 'react-redux';
 import { addContact, getContacts } from 'redux/contactSlice';
 import { Report } from 'notiflix/build/notiflix-report-aio';
-
+import { Form, Label, Span, Input, Button } from './ContactForm.styled';
 
 export const ContactForm = () => {
   const [name, setName] = useState('');
-    const [number, setNumber] = useState('');
+  const [number, setNumber] = useState('');
 
-    const onChangeName = e => setName(e.currentTarget.value);
-    const onChangeNumber = e => setNumber(e.currentTarget.value);
+  const onChangeName = e => setName(e.currentTarget.value);
+  const onChangeNumber = e => setNumber(e.currentTarget.value);
 
-    const contacts = useSelector(getContacts);
-    const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
+  const dispatch = useDispatch();
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -25,25 +25,33 @@ export const ContactForm = () => {
       name: e.target.elements.name.value,
       number: e.target.elements.number.value,
     };
-  if (contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase())) {
-            return Report.warning(
-                `${name}`,
-                'This user is already in the contact list.',
-                'OK',
-            )
-        }
+    if (
+      contacts.find(
+        contact => contact.name.toLowerCase() === name.toLowerCase()
+      )
+    ) {
+      return Report.warning(
+        `${name}`,
+        'This user is already in the contact list.',
+        'OK'
+      );
+    }
 
     dispatch(addContact(newObj));
 
-    e.target.reset();
+    reset();
+  };
+  const reset = () => {
+    setName('');
+    setNumber('');
   };
 
   return (
     <Form onSubmit={handleSubmit}>
-		  <Label>
-			   <Span>Name</Span>
+      <Label>
+        <Span>Name</Span>
         <Input
-           onChange={onChangeName}
+          onChange={onChangeName}
           value={name}
           type="text"
           name="name"
@@ -53,10 +61,10 @@ export const ContactForm = () => {
         />
       </Label>
 
-		  <Label>
-			    <Span>Number</Span>
+      <Label>
+        <Span>Number</Span>
         <Input
-           onChange={onChangeNumber}
+          onChange={onChangeNumber}
           value={number}
           type="tel"
           name="number"
@@ -66,10 +74,10 @@ export const ContactForm = () => {
         />
       </Label>
 
-      <Button type="submit">
-        Add Contact
-		  </Button>
-		          </Form>
-
+      <Button type="submit">Add Contact</Button>
+    </Form>
   );
+};
+ContactForm.propType = {
+  onSubmit: PropTypes.func.isRequired,
 };
